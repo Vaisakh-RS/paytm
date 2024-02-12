@@ -1,11 +1,12 @@
 const mongoose=require('mongoose')
+require('dotenv').config()
 
 mongoose.connect(process.env.MONGODB_URL)
 .catch(err=>console.log(err))
 
 //Creating a user schema
 
-const userSchema=new Schema({
+const userSchema=new mongoose.Schema({
     firstName:{
         type:String,
         required:true,

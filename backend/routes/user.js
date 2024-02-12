@@ -4,6 +4,7 @@ const router=express.Router()
 const User=require('../db')
 const { JWT_SECRET } = require("../config")
 const jwt=require('jsonwebtoken')
+const authMiddleware=require ('../middleware')
 
 const userValidation=z.object({
     username:z.string().email(),
@@ -15,6 +16,7 @@ const userValidation=z.object({
 router.post("/signup",async(req,res)=>{
 
     const userDetails=req.body
+    console.log(userDetails)
 
     const result=userValidation.safeParse(userDetails)
     if(!result.success)
@@ -79,6 +81,30 @@ router.post("/sigin",(req,res)=>{
    
 
     res.status(411).json({message:"Error signing in"})
+
+});
+
+//to update details
+router.put("/",authMiddleware,async(req,res)=>{
+
+    const updateDetails=req.body;
+
+    const updateBody=z.object({
+        firstName:z.string().optional(),
+        lastName:z.string().optional(),
+        password:z.string().optional()
+    });
+
+    const result=updateBody.safeParse(updateDetails)
+    if(!result.success)
+    {
+        return res.status(411).json({message:"Error while updating information"})
+    }
+
+    await User.updateOne({_id:req.userId},req.body)
+
+    res.json({message:"Details updated successfully"})
+
 
 })
 
