@@ -105,6 +105,32 @@ router.put("/",authMiddleware,async(req,res)=>{
     res.json({message:"Details updated successfully"})
 
 
+});
+
+//to filter users and send them money
+
+router.get("/bulk",(req,res)=>{
+    const serachVal=req.query.filter||" "
+    const users=await User.find({
+        $or:[
+            {firstName:{
+                "$regex":serachVal
+            }},
+            {lastName:{
+                "$regex":serachVal
+            }}
+        ]
+    })
+
+    res.json({
+        user:users.map(user=>({
+            username:user.username,
+            firstName:user.firstName,
+            lastName:user.lastName,
+            id:user._id
+        }))
+    })
+    
 })
 
 
