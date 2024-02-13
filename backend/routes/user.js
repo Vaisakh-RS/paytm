@@ -1,7 +1,7 @@
 const express=require("express")
 const z=require('zod')
 const router=express.Router()
-const User=require('../db')
+const {User,Account}=require('../db')
 const { JWT_SECRET } = require("../config")
 const jwt=require('jsonwebtoken')
 const authMiddleware=require('../middleware')
@@ -16,8 +16,7 @@ const userValidation=z.object({
 router.post("/signup",async(req,res)=>{
 
     const userDetails=req.body
-    console.log(userDetails)
-
+  
     const result=userValidation.safeParse(userDetails)
     if(!result.success)
     {
@@ -34,9 +33,16 @@ router.post("/signup",async(req,res)=>{
                 username:userDetails.username,
                 firstName:userDetails.firstName,
                 lastName:userDetails.lastName,
-                password:userDetails.password
-
+                password:userDetails.password,
             })
+
+            const userId=newUser._id
+            //create account for the user and intialize it with a random amount
+            await Account.create({
+                userId,
+                balance:Math.random()*10000+1
+            })
+
             const token=jwt.sign({
                 id:newUser._id
             },JWT_SECRET)
