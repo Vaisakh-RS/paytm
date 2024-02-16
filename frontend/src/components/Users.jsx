@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "./Button";
 
+//how to pass user names as a prop
 export default function Users()
 {
     return(
