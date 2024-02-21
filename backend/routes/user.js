@@ -6,6 +6,7 @@ const { JWT_SECRET } = require("../config")
 const jwt=require('jsonwebtoken')
 const authMiddleware=require('../middleware')
 
+
 const userValidation=z.object({
     username:z.string().email(),
     firstName:z.string(),
@@ -62,9 +63,10 @@ const signinBody=z.object({
     password:z.string()
 });
 
-router.post("/sigin",(req,res)=>{
+router.post("/signin",(req,res)=>{
     const username=req.body.username
     const password=req.body.password
+
 
     const result=signinBody.safeParse({username,password})
     if(!result.success)
@@ -79,10 +81,10 @@ router.post("/sigin",(req,res)=>{
             id:user._id
         },JWT_SECRET)
     
-        res.status(200).json({
-            token:token
-        })
-        return
+        // res.status(200).json({
+        //     token:token
+        // })
+        return res.redirect("../frontend/src/pages/Dashboard")
     }
    
 
